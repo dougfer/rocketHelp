@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react'
-import { SignIn } from './src/screens'
+import React from 'react'
+import { SignIn, Home } from './src/screens'
 import { NativeBaseProvider, StatusBar } from 'native-base'
 import { THEME } from './src/styles/theme'
 import { useFonts, Roboto_400Regular, Roboto_700Bold } from '@expo-google-fonts/roboto'
@@ -14,7 +14,7 @@ export default function App() {
   return (
     <NativeBaseProvider theme={THEME}>
       <StatusBar barStyle='light-content' backgroundColor='transparent' translucent />
-      {fontsLoaded ? <SignIn /> : <Loading />}
+      {fontsLoaded ? <Home /> : <Loading />}
     </NativeBaseProvider>
   )
 }
