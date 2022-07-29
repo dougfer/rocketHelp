@@ -1,27 +1,46 @@
 import React, { useState } from 'react'
-import { Filter, Order, OrderProps, Button } from '../../components'
-import { SignOut, ChatTeardropText } from 'phosphor-react-native'
 import Logo from '../../assets/logo_secondary.svg'
+import { useNavigation } from '@react-navigation/native'
+import { SignOut, ChatTeardropText } from 'phosphor-react-native'
+import { Filter, Order, OrderProps, Button } from '../../components'
 import { Heading, HStack, IconButton, VStack, useTheme, Text, FlatList, Center } from 'native-base'
+import auth from '@react-native-firebase/auth'
+import { Alert } from 'react-native'
 
 export const Home = () => {
   const [statusSelected, setStatusSelected] = useState<'open' | 'closed'>('open')
   const [orders, setOrders] = useState<OrderProps[]>([
-  // {
-  //   id: '123',
-  //   patrimony: '45646546',
-  //   when: '18/07/2022 às 10:00',
-  //   status: 'open',
-  // },
-  // {
-  //   id: '123456',
-  //   patrimony: '45646546',
-  //   when: '18/07/2022 às 10:00',
-  //   status: 'open',
-  // }
+  {
+    id: '123',
+    patrimony: '45646546',
+    when: '18/07/2022 às 10:00',
+    status: 'open',
+  },
+  {
+    id: '123456',
+    patrimony: '45646546',
+    when: '18/07/2022 às 10:00',
+    status: 'open',
+  }
   ])
+  const navigation = useNavigation()
 
   const { colors } = useTheme()
+
+  const handleNewOrder = () => {
+    navigation.navigate('new')
+  }
+
+  const handleOpenDetails = (orderId: string) => {
+    navigation.navigate('details', { orderId })
+  }
+
+  const handleLogout = () => {
+    auth().signOut().catch((err) => {
+      console.log(err)
+      Alert.alert('Sair', 'Não foi possível sair')
+    })
+  }
 
   return (
     <VStack 
@@ -40,14 +59,15 @@ export const Home = () => {
       >
         <Logo />
         <IconButton
+          onPress={handleLogout}
           icon={<SignOut size={26} color={colors.gray[300]} />}
         />
       </HStack>
       <VStack flex={1} px={6}>
         <HStack w='full' mt={8} mb={4} justifyContent='space-between' alignItems='center'>
-          <Heading color='gray.100' >Meus chamados</Heading>
+          <Heading color='gray.100'>Solicitações</Heading>
           <Text color='gray.200'> 
-            3
+            {orders.length}
           </Text>
         </HStack>
         <HStack space={3} mb={8}>
@@ -67,7 +87,7 @@ export const Home = () => {
         <FlatList 
           data={orders}
           keyExtractor={({id}) => id}
-          renderItem={({item}) => <Order data={item} />}
+          renderItem={({item}) => <Order onPress={() => handleOpenDetails(item.id)} data={item} />}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 100 }}
           ListEmptyComponent={() => (
@@ -80,7 +100,7 @@ export const Home = () => {
             </Center>
           )}
         />
-        <Button title='Nova solicitação' />
+        <Button title='Nova solicitação' onPress={handleNewOrder} />
       </VStack>
     </VStack>
   );
